@@ -70,3 +70,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
 # SMARTHETER
+
+This app was generated during a project from the *Technische Hochschule Mannheim* and it'sonly purpose is to demonstrate how an application for the technology **SMARTHETER** could look like. 
