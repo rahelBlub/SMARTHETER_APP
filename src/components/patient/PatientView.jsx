@@ -2,7 +2,7 @@ import { useState } from "react";
 import { C } from "../../constants/colors";
 import { patients } from "../../data/patients";
 import { symList } from "../../data/symList";
-import UrinRing from "../shared/UrinRing";
+//import UrinRing from "../shared/UrinRing";
 import InfoRow from "../shared/InfoRow";
 
 export default function PatientView({pscreen,setPscreen}){

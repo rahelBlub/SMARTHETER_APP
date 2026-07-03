@@ -1,14 +1,7 @@
 import { useState } from "react";
-//import Badge from "./components/shared/Badge";
 import { C } from "./constants/colors";
-//import InfoRow from "./components/shared/InfoRow";
-//import UrinRing from "./components/shared/UrinRing";
-//import MiniStat from "./components/clinician/MiniStat";
-//import UCard from "./components/clinician/UCard";
-//import AlertCard from "./components/shared/AlertCard";
 import { patients } from "./data/patients";
 import ClinicianView from "./components/clinician/ClinicianView";
-//import { symList } from "./data/symList";
 import PatientView from "./components/patient/PatientView";
 
 
