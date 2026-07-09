@@ -3,27 +3,70 @@ import { C } from "./constants/colors";
 import { patients } from "./data/patients";
 import ClinicianView from "./components/clinician/ClinicianView";
 import PatientView from "./components/patient/PatientView";
+import TechnologyView from "./components/technology/TechnologyView";
 
+function renderView(view, screen, setScreen, selId, setSelId) {
+  switch (view) {
+    case "clinician":
+      return (
+        <ClinicianView
+          screen={screen}
+          setScreen={setScreen}
+          selId={selId}
+          setSelId={setSelId}
+        />
+      );
+
+    case "patient":
+      return (
+        <PatientView
+          pscreen={screen}
+          setPscreen={setScreen}
+        />
+      );
+
+    case "technology":
+      return (
+        <TechnologyView
+          tscreen={screen}
+          setTscreen={setScreen}
+          tech={{
+            name: "Smartheter",
+            detail:
+              "Smartheter is a smart catheter system that monitors urine output and detects early signs of urinary tract infections (UTIs) in patients with indwelling catheters. It provides real-time data to clinicians and patients, enabling timely interventions and improved patient care.",
+          }}
+        />
+      );
+
+    default:
+      return null;
+  }
+}
 
 export default function App(){
   const [view,setView]=useState("clinician");
   const [screen,setScreen]=useState("overview");
   const [selId,setSelId]=useState(null);
-  const [pscreen,setPscreen]=useState("home");
+  //const [pscreen,setPscreen]=useState("home");
 
   return(
-    <div style={{fontFamily:"system-ui,-apple-system,sans-serif",minHeight:"100vh",background:C.g100}}>
+    <div style={{fontFamily:"system-ui,-apple-system,sans-serif",minHeight:"100vh",background:C.dark}}>
       <div style={{background:C.navy,padding:"10px 18px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
         <div style={{display:"flex",alignItems:"center",gap:7}}>
-          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z" fill="#5DCAA5"/><circle cx="12" cy="9" r="3" fill="#0F1B35"/></svg>
-          <span style={{color:"white",fontWeight:700,fontSize:15}}>Smartheter</span>
+          <div onClick={()=>{setView("technology");setScreen("overview");}} style={{display:"flex",alignItems:"center",gap:6,cursor:"pointer"}}>
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z" fill="#5DCAA5"/><circle cx="12" cy="9" r="3" fill="#0F1B35"/></svg>
+            <span style={{color:"white",fontWeight:700,fontSize:15}}>Smartheter</span>
+        </div>
         </div>
         {/*Nav-Bar*/}
         <div style={{display:"flex",gap:6}}>
+          <button onClick={()=>{setView("technology");setScreen("overview");}} style={{fontSize:12,padding:"4px 12px",borderRadius:20,border:"none",cursor:"pointer",background:view==="technology"?"#5DCAA5":"rgba(255,255,255,0.12)",color:view==="technology"?"#0F1B35":"white",fontWeight:600}}>
+            About Smartheter
+          </button>
           <button onClick={()=>{setView("clinician");setScreen("overview");}} style={{fontSize:12,padding:"4px 12px",borderRadius:20,border:"none",cursor:"pointer",background:view==="clinician"?"#5DCAA5":"rgba(255,255,255,0.12)",color:view==="clinician"?"#0F1B35":"white",fontWeight:600}}>
             Clinician Dashboard
           </button>
-          <button onClick={()=>{setView("patient");setPscreen("home");}} style={{fontSize:12,padding:"4px 12px",borderRadius:20,border:"none",cursor:"pointer",background:view==="patient"?"#5DCAA5":"rgba(255,255,255,0.12)",color:view==="patient"?"#0F1B35":"white",fontWeight:600}}>
+          <button onClick={()=>{setView("patient");setScreen("home");}} style={{fontSize:12,padding:"4px 12px",borderRadius:20,border:"none",cursor:"pointer",background:view==="patient"?"#5DCAA5":"rgba(255,255,255,0.12)",color:view==="patient"?"#0F1B35":"white",fontWeight:600}}>
             Patient App
           </button>
         </div>
@@ -45,16 +88,13 @@ export default function App(){
         <div style={{background:"white",borderBottom:`1px solid ${C.g200}`,padding:"7px 18px",display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}}>
           <span style={{fontSize:11,color:C.g600}}>Screen:</span>
           {[["home","🏠 Home (alert)"],["symptoms","📝 Symptoms"],["trends","📈 Trends"],["alerts","🔔 Alerts"],["profile","👤 Profile"]].map(([s,l])=>(
-            <button key={s} onClick={()=>setPscreen(s)} style={{fontSize:11,padding:"3px 10px",borderRadius:20,border:`1px solid ${pscreen===s?C.navy:C.g300}`,background:pscreen===s?C.navy:"white",color:pscreen===s?"white":C.g600,cursor:"pointer",fontWeight:pscreen===s?700:400}}>
+            <button key={s} onClick={()=>setScreen(s)} style={{fontSize:11,padding:"3px 10px",borderRadius:20,border:`1px solid ${screen===s?C.navy:C.g300}`,background:screen===s?C.navy:"white",color:screen===s?"white":C.g600,cursor:"pointer",fontWeight:screen===s?700:400}}>
               {l}
             </button>
           ))}
         </div>
       )}
-      {view==="clinician"
-        ?<ClinicianView screen={screen} setScreen={setScreen} selId={selId} setSelId={setSelId}/>
-        :<PatientView pscreen={pscreen} setPscreen={setPscreen}/>
-      }
+      {renderView(view,screen,setScreen,selId,setSelId)}
     </div>
   );
 }
