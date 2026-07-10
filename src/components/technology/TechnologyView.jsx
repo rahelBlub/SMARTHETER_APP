@@ -8,6 +8,13 @@ import Medien4 from "../../data/videos/Medien4.mp4";
 import Medien5 from "../../data/videos/Medien5.mp4";
 import Medien6 from "../../data/videos/Medien6.mp4";
 import Medien7 from "../../data/videos/Medien7.mp4";
+import Bild1 from "../../data/images/Bild1.png";
+import trapped_particles from "../../data/images/trapped_particles.png";
+import impedance_strings from "../../data/images/impedance_strings.png";
+import nanoparticle_structures from "../../data/images/nanoparticle_structures.jpg";
+//import data_transfer from "../../data/images/data_transfer.jpg";
+import clinician_data_transfer from "../../data/images/clinician_data_transfer.png";
+import pyrolysis from "../../data/images/pyrolysis.png";
 
 const VIDEO_SPEED = 0.75;
 const PAUSE_MS = 1500;
@@ -99,7 +106,7 @@ export default function TechnologyView({ tscreen, setTscreen, tech }) {
     el.src = videos[index];
     el.load();
     el.playbackRate = VIDEO_SPEED;
-    el.play().catch(() => {});
+    el.play().catch(() => { });
   }, [activeLayer, index, videos, videoRefs]);
 
   const nextVideo = () => {
@@ -112,7 +119,7 @@ export default function TechnologyView({ tscreen, setTscreen, tech }) {
       nextEl.load();
       nextEl.currentTime = 0;
       nextEl.playbackRate = VIDEO_SPEED;
-      nextEl.play().catch(() => {});
+      nextEl.play().catch(() => { });
       setIndex(nextIndex);
       setActiveLayer(nextLayer);
     }, PAUSE_MS);
@@ -120,14 +127,14 @@ export default function TechnologyView({ tscreen, setTscreen, tech }) {
 
   const togglePause = () => {
     const el = videoRefs[activeLayer].current;
-      if (!el) return;
-      if (el.paused) {
-        el.play().catch(() => {});
-        setIsPaused(false);
-      } else {
-        el.pause();
-        setIsPaused(true);
-      }
+    if (!el) return;
+    if (el.paused) {
+      el.play().catch(() => { });
+      setIsPaused(false);
+    } else {
+      el.pause();
+      setIsPaused(true);
+    }
   };
 
   const meta = videoMeta[index];
@@ -140,27 +147,31 @@ export default function TechnologyView({ tscreen, setTscreen, tech }) {
         flexDirection: "column",
         minHeight: "calc(100vh - 90px)",
         background: C.g100,
-        gap: 24,
         overflowY: "auto",
       }}
     >
-       {/* Infokarte */}
+      {/* Infokarte */}
+      <div
+        style={{
+          background: C.white,
+          border: `1px solid ${C.g200}`,
+          borderRadius: 10,
+          padding: "24px 20px",
+          gap: 24,
+          margin: "24px",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+        }}
+      >
         <div
-            style={{
-                background: C.white,
-                border: `1px solid ${C.g200}`,
-                borderRadius: 10,
-                padding: 20,
-                boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
-            }}
-        >
-        <div
-          style={{fontSize: 20,fontWeight: 700,color: C.green,marginBottom: 12,}}>
-          {tech.name}
+          style={{ fontSize: 20, fontWeight: 700, color: C.green, marginBottom: 12, }}>
+          What if a catheter could <b style={{ color: "orange" }}>see</b> what patients cannot <b style={{ color: "orange" }}>feel</b>?
         </div>
         <div
-          style={{fontSize: 14,lineHeight: 1.6,color: C.g800,maxWidth: 900,}}>
-          {tech.detail}
+          style={{ fontSize: 14, lineHeight: 1.6, color: C.g800, maxWidth: 900, marginLeft: 20, }}>
+          <strong style={{ fontSize: 16 }}>Smartheter</strong> is a smart catheter system that monitors urine output and detects early signs of urinary tract infections (UTIs) in patients with indwelling catheters. It provides real-time data to clinicians and patients, enabling timely interventions and improved patient care.
+        </div>
+        <div style={{ fontSize: 14, lineHeight: 1.6, color: C.g800, maxWidth: 900, marginLeft: 20, }}>
+          A concrete & measurable contribution to combating the silent pandemic.
         </div>
       </div>
 
@@ -171,16 +182,16 @@ export default function TechnologyView({ tscreen, setTscreen, tech }) {
           <div
             onClick={togglePause}
             style={{
-                position: "relative",
-                width: "100%",
-                aspectRatio: "16/9",
-                background: "#000",
-                cursor: "pointer",   // ← shows hand cursor on hover
+              position: "relative",
+              width: "100%",
+              aspectRatio: "16/9",
+              background: "#000",
+              cursor: "pointer",   // ← shows hand cursor on hover
             }}
           >
-          {/* video */}
-          <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", background: "#000" }}>
-          </div>
+            {/* video */}
+            <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", background: "#000" }}>
+            </div>
             {[0, 1].map((layer) => (
               <video
                 key={layer}
@@ -200,27 +211,27 @@ export default function TechnologyView({ tscreen, setTscreen, tech }) {
               />
             ))}
             {isPaused && (
-    <div
-      style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        background: "rgba(0,0,0,0.5)",
-        borderRadius: "50%",
-        width: 56,
-        height: 56,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        pointerEvents: "none",   // ← click passes through to the div
-      }}
-    >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-        <path d="M8 5h3v14H8zm5 0h3v14h-3z"/>
-      </svg>
-    </div>
-  )}
+              <div
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  background: "rgba(0,0,0,0.5)",
+                  borderRadius: "50%",
+                  width: 56,
+                  height: 56,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  pointerEvents: "none",   // ← click passes through to the div
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                  <path d="M8 5h3v14H8zm5 0h3v14h-3z" />
+                </svg>
+              </div>
+            )}
             {/* progress dots */}
             <div
               style={{
@@ -267,7 +278,7 @@ export default function TechnologyView({ tscreen, setTscreen, tech }) {
                   el.src = videos[prev];
                   el.load();
                   el.playbackRate = VIDEO_SPEED;
-                  el.play().catch(() => {});
+                  el.play().catch(() => { });
                   setIndex(prev);
                   setActiveLayer(nextLayer);
                 }}
@@ -288,7 +299,7 @@ export default function TechnologyView({ tscreen, setTscreen, tech }) {
                   el.src = videos[next];
                   el.load();
                   el.playbackRate = VIDEO_SPEED;
-                  el.play().catch(() => {});
+                  el.play().catch(() => { });
                   setIndex(next);
                   setActiveLayer(nextLayer);
                 }}
@@ -310,25 +321,35 @@ export default function TechnologyView({ tscreen, setTscreen, tech }) {
           <h2 style={{ fontSize: 18, fontWeight: 700, color: C.g800, marginBottom: 20 }}>
             From urine to diagnosis in real time
           </h2>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16 }}>
             {[
               {
+                image: <img src={trapped_particles} alt="Trapped Particles" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 10 }} />,
                 step: "01",
                 title: "Bacterial capture",
                 body: "As urine flows tangentially across the SCERA surface, bacteria become trapped in the ceramic nanostructure's pores due to their size and surface charge.",
               },
               {
+                image: <img src={impedance_strings} alt="Impedance Measurement" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 10 }} />,
                 step: "02",
                 title: "Impedance measurement",
                 body: "Embedded electrodes measure an impedance spectrum across the trapped material. Each bacterial species produces a distinct electrical signature.",
               },
               {
+                image: <img src={nanoparticle_structures} alt="ML Classification" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 10 }} />,
                 step: "03",
                 title: "ML classification",
                 body: "An on-device machine learning model classifies the impedance pattern in real time, identifying the likely pathogen without sending raw data to the cloud.",
               },
               {
+                image: <img src={clinician_data_transfer} alt="Data Transfer" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 10 }} />,
                 step: "04",
+                title: "Data Transfer & Alert",
+                body: "The classification result is transmitted to the hospital's monitoring system via BLE or Wi-Fi. If a potential infection is detected, an alert is sent to the responsible clinician.",
+              },
+              {
+                image: <img src={pyrolysis} alt="Self-cleaning via Pyrolysis" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 10 }} />,
+                step: "05",
                 title: "Self-cleaning via pyrolysis",
                 body: "After measurement, SCERA destroys the trapped particles through pyrolysis — burning them off at high temperature — making the sensor reusable by design.",
               },
@@ -340,16 +361,69 @@ export default function TechnologyView({ tscreen, setTscreen, tech }) {
                   borderRadius: 10,
                   padding: "14px 16px",
                   borderLeft: `3px solid ${C.teal}`,
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
                 }}
               >
-                <div style={{ fontSize: 11, fontWeight: 800, color: C.teal, marginBottom: 4 }}>
-                  Step {s.step}
-                </div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: C.g800, marginBottom: 6 }}>
-                  {s.title}
-                </div>
-                <div style={{ fontSize: 12, color: C.g600, lineHeight: 1.6 }}>
-                  {s.body}
+                {/* Bild */}
+                <div
+                  style={{
+                    position: "relative",
+                    borderRadius: 12,
+                    overflow: "hidden",
+                    height: 300,
+                    boxShadow: "0 2px 18px rgba(0,0,0,0.15)",
+                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-4px)";
+                    e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.18)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 6px 18px rgba(0,0,0,0.12)";
+                  }}
+                >
+                  {s.image}
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: 20,
+                      bottom: 20,
+                      width: 280,
+                      inset: 0,
+                      background: "linear-gradient(to top, rgba(0,0,0,0.45), rgba(0,0,0,0.05) 60%, transparent)",
+                      backdropFilter: "blur(6px)",
+                      boxShadow: "0 2px 18px rgba(0,0,0,0.1)",
+                      padding: 16,
+                      borderRadius: 10,
+                    }}
+                  >
+                    <div style={{ fontSize: 11, fontWeight: 800, color: C.teal, marginBottom: 4 }}>
+                      Step {s.step}
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "white", textShadow: "0.5px 1px 2px rgba(0,0,0,0.3)", marginBottom: 6 }}>
+                      {s.title}
+                    </div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", textShadow: "0.5px 1px 2px rgba(0,0,0,0.3)", lineHeight: 1.6 }}>
+                      {s.body}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: 12,
+                      right: 12,
+                      background: "rgba(0,0,0,0.55)",
+                      backdropFilter: "blur(4px)",
+                      color: "white",
+                      padding: "4px 8px",
+                      borderRadius: 6,
+                      fontSize: 10,
+                      fontWeight: 500,
+                    }}
+                  >
+                    ✦ AI-generated
+                  </div>
                 </div>
               </div>
             ))}
@@ -432,6 +506,7 @@ export default function TechnologyView({ tscreen, setTscreen, tech }) {
         <div
           style={{
             maxWidth: 960,
+            width: "100%",
             margin: "0 auto",
             display: "grid",
             gridTemplateColumns: "2fr 1fr 1fr",
@@ -478,6 +553,9 @@ export default function TechnologyView({ tscreen, setTscreen, tech }) {
                 {name}
               </div>
             ))}
+            <div>
+              <img src={Bild1} alt="logo" width={80} marginTop={20} />
+            </div>
           </div>
 
           {/* links & legal */}
@@ -488,6 +566,8 @@ export default function TechnologyView({ tscreen, setTscreen, tech }) {
             {[
               { label: "SCERA Project", href: "https://scera-project.com/" },
               { label: "Hochschule Mannheim", href: "https://www.hs-mannheim.de" },
+              { label: "inno.space", href: "https://inno-space.de" },
+              { label: "instagram", href: "https://www.instagram.com/inno.space/" },
             ].map((l) => (
               <div key={l.label} style={{ fontSize: 12, marginBottom: 4 }}>
                 <a

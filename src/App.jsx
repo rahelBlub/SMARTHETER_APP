@@ -30,11 +30,6 @@ function renderView(view, screen, setScreen, selId, setSelId) {
         <TechnologyView
           tscreen={screen}
           setTscreen={setScreen}
-          tech={{
-            name: "Smartheter",
-            detail:
-              "Smartheter is a smart catheter system that monitors urine output and detects early signs of urinary tract infections (UTIs) in patients with indwelling catheters. It provides real-time data to clinicians and patients, enabling timely interventions and improved patient care.",
-          }}
         />
       );
 
