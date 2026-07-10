@@ -1,27 +1,27 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { C } from "../../constants/colors";
 
-//import Medien1 from "../../data/videos/Medien1.mp4";
-//import Medien2 from "../../data/videos/Medien2.mp4";
-//import Medien3 from "../../data/videos/Medien3.mp4";
-//import Medien4 from "../../data/videos/Medien4.mp4";
-//import Medien5 from "../../data/videos/Medien5.mp4";
-//import Medien6 from "../../data/videos/Medien6.mp4";
-//import Medien7 from "../../data/videos/Medien7.mp4";
+import Medien1 from "../../data/videos/Medien1.mp4";
+import Medien2 from "../../data/videos/Medien2.mp4";
+import Medien3 from "../../data/videos/Medien3.mp4";
+import Medien4 from "../../data/videos/Medien4.mp4";
+import Medien5 from "../../data/videos/Medien5.mp4";
+import Medien6 from "../../data/videos/Medien6.mp4";
+import Medien7 from "../../data/videos/Medien7.mp4";
 
 //https://scera-project.com/
 
-let Medien1 = "https://www.dropbox.com/scl/fi/fivve2fwhvn1hloz1xmi9/Medien1.mp4?rlkey=e5s48zb2ohwbiw3batlq65fpw&st=z0q8n9qa&dl=1";
-let Medien2 = "https://www.dropbox.com/scl/fi/alynisjjeorsqi2z16w2f/Medien2.mp4?rlkey=upth0lgiqbgsjc6r4ovdo8o4q&st=oz77vgrr&dl=1";
-let Medien3 = "https://www.dropbox.com/scl/fi/u1my162umje9nonybbkg1/Medien3.mp4?rlkey=btrcx3cgfl52r3s2gvj0geubt&st=mb8ew6no&dl=1";
-let Medien4 = "https://www.dropbox.com/scl/fi/1zfw09fh8ut0wboy42st1/Medien4.mp4?rlkey=jsl46x7loixmjzhjlk52wfo5n&st=fnc6wddp&dl=1";
-let Medien5 = "https://www.dropbox.com/scl/fi/5met6b2667sno1lumjomd/Medien5.mp4?rlkey=24sufjy8klik5it8bei9d482c&st=zowsrj19&dl=1";
-let Medien6 = "https://www.dropbox.com/scl/fi/2v9ls8d8692n0o994qtk8/Medien6.mp4?rlkey=twfjpzvsoi4mgmn8inl5x0c5r&st=tbznebmi&dl=1";
-let Medien7 = "https://www.dropbox.com/scl/fi/u963qhp8am2kzpbsu72od/Medien7.mp4?rlkey=43tyewwiznidnx9jrwlx5xcu6&st=39b0ywui&dl=1";
+//let Medien1 = "https://www.dropbox.com/scl/fi/fivve2fwhvn1hloz1xmi9/Medien1.mp4?rlkey=e5s48zb2ohwbiw3batlq65fpw&st=z0q8n9qa&dl=1";
+//let Medien2 = "https://www.dropbox.com/scl/fi/alynisjjeorsqi2z16w2f/Medien2.mp4?rlkey=upth0lgiqbgsjc6r4ovdo8o4q&st=oz77vgrr&dl=1";
+//let Medien3 = "https://www.dropbox.com/scl/fi/u1my162umje9nonybbkg1/Medien3.mp4?rlkey=btrcx3cgfl52r3s2gvj0geubt&st=mb8ew6no&dl=1";
+//let Medien4 = "https://www.dropbox.com/scl/fi/1zfw09fh8ut0wboy42st1/Medien4.mp4?rlkey=jsl46x7loixmjzhjlk52wfo5n&st=fnc6wddp&dl=1";
+//let Medien5 = "https://www.dropbox.com/scl/fi/5met6b2667sno1lumjomd/Medien5.mp4?rlkey=24sufjy8klik5it8bei9d482c&st=zowsrj19&dl=1";
+//let Medien6 = "https://www.dropbox.com/scl/fi/2v9ls8d8692n0o994qtk8/Medien6.mp4?rlkey=twfjpzvsoi4mgmn8inl5x0c5r&st=tbznebmi&dl=1";
+//let Medien7 = "https://www.dropbox.com/scl/fi/u963qhp8am2kzpbsu72od/Medien7.mp4?rlkey=43tyewwiznidnx9jrwlx5xcu6&st=39b0ywui&dl=1";
 
 
 export default function TechnologyView({tscreen, setTscreen, tech}){
-    const videos = [
+    const videos = useMemo(() => [
         Medien1,
         Medien2,
         Medien3,
@@ -29,14 +29,14 @@ export default function TechnologyView({tscreen, setTscreen, tech}){
         Medien5,
         Medien6,
         Medien7
-    ];
+    ], []);
 
     const [index, setIndex] = useState(0);
     const [activeLayer, setActiveLayer] = useState(0); // 0 oder 1
 
     const videoRef1 = useRef(null);
     const videoRef2 = useRef(null);
-    const videoRefs = [videoRef1, videoRef2];
+    const videoRefs = useMemo(() => [videoRef1, videoRef2], []);
     
     const VIDEO_SPEED = 0.75; // Geschwindigkeit
     const PAUSE_MS = 1500; // Pause zwischen Videos
@@ -51,7 +51,7 @@ export default function TechnologyView({tscreen, setTscreen, tech}){
             video.src = src;
             video.preload = "auto";
         });
-    }, []);
+    }, [videos]);
 
 
     // PLAY CURRENT VIDEO
@@ -69,7 +69,7 @@ export default function TechnologyView({tscreen, setTscreen, tech}){
         if (playPromise !== undefined) {
             playPromise.catch(() => {});
         }
-    }, [activeLayer, index]);
+    }, [activeLayer, index, videos, videoRefs]);
 
   const nextVideo = () => {
     setTimeout(() => {
