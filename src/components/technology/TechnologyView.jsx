@@ -9,108 +9,142 @@ import Medien5 from "../../data/videos/Medien5.mp4";
 import Medien6 from "../../data/videos/Medien6.mp4";
 import Medien7 from "../../data/videos/Medien7.mp4";
 
-//https://scera-project.com/
+const VIDEO_SPEED = 0.75;
+const PAUSE_MS = 1500;
 
-//let Medien1 = "https://www.dropbox.com/scl/fi/fivve2fwhvn1hloz1xmi9/Medien1.mp4?rlkey=e5s48zb2ohwbiw3batlq65fpw&st=z0q8n9qa&dl=1";
-//let Medien2 = "https://www.dropbox.com/scl/fi/alynisjjeorsqi2z16w2f/Medien2.mp4?rlkey=upth0lgiqbgsjc6r4ovdo8o4q&st=oz77vgrr&dl=1";
-//let Medien3 = "https://www.dropbox.com/scl/fi/u1my162umje9nonybbkg1/Medien3.mp4?rlkey=btrcx3cgfl52r3s2gvj0geubt&st=mb8ew6no&dl=1";
-//let Medien4 = "https://www.dropbox.com/scl/fi/1zfw09fh8ut0wboy42st1/Medien4.mp4?rlkey=jsl46x7loixmjzhjlk52wfo5n&st=fnc6wddp&dl=1";
-//let Medien5 = "https://www.dropbox.com/scl/fi/5met6b2667sno1lumjomd/Medien5.mp4?rlkey=24sufjy8klik5it8bei9d482c&st=zowsrj19&dl=1";
-//let Medien6 = "https://www.dropbox.com/scl/fi/2v9ls8d8692n0o994qtk8/Medien6.mp4?rlkey=twfjpzvsoi4mgmn8inl5x0c5r&st=tbznebmi&dl=1";
-//let Medien7 = "https://www.dropbox.com/scl/fi/u963qhp8am2kzpbsu72od/Medien7.mp4?rlkey=43tyewwiznidnx9jrwlx5xcu6&st=39b0ywui&dl=1";
+const videoMeta = [
+  {
+    title: "Urine Flow & Bacterial Capture",
+    description:
+      "Urine flows tangentially across the SCERA surface. Due to the ceramic nanostructure's porous geometry, bacteria in the urine are captured in the pores as the fluid passes through.",
+  },
+  {
+    title: "Smartheter — Exploded View",
+    description:
+      "An exploded view of the Smartheter device showing all core components: the SCERA sensor, embedded electrodes, battery, and microcontroller — engineered to fit within a standard catheter form factor.",
+  },
+  {
+    title: "SCERA Structure",
+    description:
+      "A closer look at the SCERA (Smart CERAmic) material. The nanostructured ceramic surface provides a high surface area for bacterial capture while remaining biocompatible inside the urinary tract.",
+  },
+  {
+    title: "SCERA Nanostructure",
+    description:
+      "At nanoscale resolution, the porous architecture of SCERA becomes visible. This structure is what enables selective trapping of bacteria — different pore sizes and surface chemistries interact differently with different bacterial species.",
+  },
+  {
+    title: "Electrodes",
+    description:
+      "Conductive electrodes embedded within the SCERA material facilitate electron transfer during impedance measurement. Once bacteria are trapped, the electrodes read a characteristic electrical pattern that the microcontroller interprets.",
+  },
+  {
+    title: "Battery",
+    description:
+      "A compact, low-power battery supplies energy to both the SCERA sensor and the microcontroller. The power budget is optimised for continuous measurement over typical catheter dwell times of several days.",
+  },
+  {
+    title: "Microcontroller",
+    description:
+      "The microcontroller is the brain of the Smartheter. It processes the raw impedance signal from the electrodes, runs the on-device ML classification, and transmits the result to the MQTT broker via BLE or Wi-Fi.",
+  },
+];
 
+// ── shared style helpers ────────────────────────────────────────
+const card = (extra = {}) => ({
+  background: C.white,
+  border: `1px solid ${C.g200}`,
+  borderRadius: 12,
+  padding: 24,
+  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+  ...extra,
+});
 
-export default function TechnologyView({tscreen, setTscreen, tech}){
-    const videos = useMemo(() => [
-        Medien1,
-        Medien2,
-        Medien3,
-        Medien4,
-        Medien5,
-        Medien6,
-        Medien7
-    ], []);
+const sectionLabel = {
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: 1.5,
+  textTransform: "uppercase",
+  color: C.teal,
+  marginBottom: 6,
+};
 
-    const [index, setIndex] = useState(0);
-    const [activeLayer, setActiveLayer] = useState(0); // 0 oder 1
+export default function TechnologyView({ tscreen, setTscreen, tech }) {
+  const videos = useMemo(
+    () => [Medien1, Medien2, Medien3, Medien4, Medien5, Medien6, Medien7],
+    []
+  );
 
-    const videoRef1 = useRef(null);
-    const videoRef2 = useRef(null);
-    const videoRefs = useMemo(() => [videoRef1, videoRef2], []);
-    
-    const VIDEO_SPEED = 0.75; // Geschwindigkeit
-    const PAUSE_MS = 1500; // Pause zwischen Videos
+  const [index, setIndex] = useState(0);
+  const [activeLayer, setActiveLayer] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
-    // ---------------------------
-    // 🔥 PRELOAD ALL VIDEOS
-    // ---------------------------
-    // eslint-disable-next-line
-    useEffect(() => {
-        videos.forEach((src) => {
-            const video = document.createElement("video");
-            video.src = src;
-            video.preload = "auto";
-        });
-    }, [videos]);
+  const videoRef1 = useRef(null);
+  const videoRef2 = useRef(null);
+  const videoRefs = useMemo(() => [videoRef1, videoRef2], []);
 
+  // preload
+  useEffect(() => {
+    videos.forEach((src) => {
+      const v = document.createElement("video");
+      v.src = src;
+      v.preload = "auto";
+    });
+  }, [videos]);
 
-    // PLAY CURRENT VIDEO
-    // ---------------------------
-    // eslint-disable-next-line
-    useEffect(() => {
-        const el = videoRefs[activeLayer].current;
-        if (!el) return;
-
-        el.src = videos[index];
-        el.load();
-        el.playbackRate = VIDEO_SPEED;
-
-        const playPromise = el.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(() => {});
-        }
-    }, [activeLayer, index, videos, videoRefs]);
+  // play current
+  useEffect(() => {
+    const el = videoRefs[activeLayer].current;
+    if (!el) return;
+    el.src = videos[index];
+    el.load();
+    el.playbackRate = VIDEO_SPEED;
+    el.play().catch(() => {});
+  }, [activeLayer, index, videos, videoRefs]);
 
   const nextVideo = () => {
     setTimeout(() => {
       const nextIndex = (index + 1) % videos.length;
       const nextLayer = activeLayer === 0 ? 1 : 0;
-
-        const nextVideoEl = videoRefs[nextLayer].current;
-        const prevVideoEl = videoRefs[activeLayer].current;
-        if (!nextVideoEl || !prevVideoEl) return;
-
-      // Video in inaktiver Layer vorbereiten
-      
-      if (nextVideoEl) {
-        nextVideoEl.currentTime = 0;
-        nextVideoEl.playbackRate = VIDEO_SPEED;
-        nextVideoEl.play().catch(() => {});
-        nextVideoEl.src = videos[nextIndex];
-        nextVideoEl.load(); // Preload the next video
-        //prevVideoEl.pause();
-      }
-
+      const nextEl = videoRefs[nextLayer].current;
+      if (!nextEl) return;
+      nextEl.src = videos[nextIndex];
+      nextEl.load();
+      nextEl.currentTime = 0;
+      nextEl.playbackRate = VIDEO_SPEED;
+      nextEl.play().catch(() => {});
       setIndex(nextIndex);
       setActiveLayer(nextLayer);
     }, PAUSE_MS);
   };
 
-  // UI --------------------------------
+  const togglePause = () => {
+    const el = videoRefs[activeLayer].current;
+      if (!el) return;
+      if (el.paused) {
+        el.play().catch(() => {});
+        setIsPaused(false);
+      } else {
+        el.pause();
+        setIsPaused(true);
+      }
+  };
 
-    return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                height: "calc(100vh - 90px)",
-                background: C.g100,
-                padding: 24,
-                gap: 20,
-                overflowY: "auto",
-            }}
-        >
-    {/* Infokarte */}
+  const meta = videoMeta[index];
+
+  // ── render ──────────────────────────────────────────────────
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "calc(100vh - 90px)",
+        background: C.g100,
+        gap: 24,
+        overflowY: "auto",
+      }}
+    >
+       {/* Infokarte */}
         <div
             style={{
                 background: C.white,
@@ -130,66 +164,373 @@ export default function TechnologyView({tscreen, setTscreen, tech}){
         </div>
       </div>
 
-      {/* Video */}
-      <div
+      <div style={{ maxWidth: 960, margin: "0 auto", padding: "32px 24px", width: "100%" }}>
+
+        {/* ── VIDEO PLAYER ── */}
+        <div style={card({ marginBottom: 24, padding: 0, overflow: "hidden" })}>
+          <div
+            onClick={togglePause}
+            style={{
+                position: "relative",
+                width: "100%",
+                aspectRatio: "16/9",
+                background: "#000",
+                cursor: "pointer",   // ← shows hand cursor on hover
+            }}
+          >
+          {/* video */}
+          <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", background: "#000" }}>
+          </div>
+            {[0, 1].map((layer) => (
+              <video
+                key={layer}
+                ref={videoRefs[layer]}
+                muted
+                playsInline
+                onEnded={nextVideo}
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  opacity: activeLayer === layer ? 1 : 0,
+                  transition: "opacity 500ms ease",
+                }}
+              />
+            ))}
+            {isPaused && (
+    <div
+      style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        background: "rgba(0,0,0,0.5)",
+        borderRadius: "50%",
+        width: 56,
+        height: 56,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        pointerEvents: "none",   // ← click passes through to the div
+      }}
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+        <path d="M8 5h3v14H8zm5 0h3v14h-3z"/>
+      </svg>
+    </div>
+  )}
+            {/* progress dots */}
+            <div
+              style={{
+                position: "absolute",
+                bottom: 14,
+                left: "50%",
+                transform: "translateX(-50%)",
+                display: "flex",
+                gap: 6,
+              }}
+            >
+              {videos.map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: i === index ? 20 : 7,
+                    height: 7,
+                    borderRadius: 4,
+                    background: i === index ? C.tealM : "rgba(255,255,255,0.4)",
+                    transition: "all 0.3s ease",
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* video caption */}
+          <div style={{ padding: "16px 20px 20px" }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: C.g800, marginBottom: 4 }}>
+              {index + 1} / {videos.length} — {meta.title}
+            </div>
+            <div style={{ fontSize: 13, color: C.g600, lineHeight: 1.6 }}>
+              {meta.description}
+            </div>
+
+            {/* manual nav buttons */}
+            <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+              <button
+                onClick={() => {
+                  const prev = (index - 1 + videos.length) % videos.length;
+                  const nextLayer = activeLayer === 0 ? 1 : 0;
+                  const el = videoRefs[nextLayer].current;
+                  if (!el) return;
+                  el.src = videos[prev];
+                  el.load();
+                  el.playbackRate = VIDEO_SPEED;
+                  el.play().catch(() => {});
+                  setIndex(prev);
+                  setActiveLayer(nextLayer);
+                }}
+                style={{
+                  fontSize: 12, padding: "5px 14px", borderRadius: 20,
+                  border: `1px solid ${C.g300}`, background: C.white,
+                  color: C.g600, cursor: "pointer",
+                }}
+              >
+                ← Previous
+              </button>
+              <button
+                onClick={() => {
+                  const next = (index + 1) % videos.length;
+                  const nextLayer = activeLayer === 0 ? 1 : 0;
+                  const el = videoRefs[nextLayer].current;
+                  if (!el) return;
+                  el.src = videos[next];
+                  el.load();
+                  el.playbackRate = VIDEO_SPEED;
+                  el.play().catch(() => {});
+                  setIndex(next);
+                  setActiveLayer(nextLayer);
+                }}
+                style={{
+                  fontSize: 12, padding: "5px 14px", borderRadius: 20,
+                  border: `1px solid ${C.g300}`, background: C.white,
+                  color: C.g600, cursor: "pointer",
+                }}
+              >
+                Next →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ── HOW IT WORKS ── */}
+        <div style={card({ marginBottom: 24 })}>
+          <div style={sectionLabel}>How it works</div>
+          <h2 style={{ fontSize: 18, fontWeight: 700, color: C.g800, marginBottom: 20 }}>
+            From urine to diagnosis in real time
+          </h2>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            {[
+              {
+                step: "01",
+                title: "Bacterial capture",
+                body: "As urine flows tangentially across the SCERA surface, bacteria become trapped in the ceramic nanostructure's pores due to their size and surface charge.",
+              },
+              {
+                step: "02",
+                title: "Impedance measurement",
+                body: "Embedded electrodes measure an impedance spectrum across the trapped material. Each bacterial species produces a distinct electrical signature.",
+              },
+              {
+                step: "03",
+                title: "ML classification",
+                body: "An on-device machine learning model classifies the impedance pattern in real time, identifying the likely pathogen without sending raw data to the cloud.",
+              },
+              {
+                step: "04",
+                title: "Self-cleaning via pyrolysis",
+                body: "After measurement, SCERA destroys the trapped particles through pyrolysis — burning them off at high temperature — making the sensor reusable by design.",
+              },
+            ].map((s) => (
+              <div
+                key={s.step}
+                style={{
+                  background: C.g50,
+                  borderRadius: 10,
+                  padding: "14px 16px",
+                  borderLeft: `3px solid ${C.teal}`,
+                }}
+              >
+                <div style={{ fontSize: 11, fontWeight: 800, color: C.teal, marginBottom: 4 }}>
+                  Step {s.step}
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: C.g800, marginBottom: 6 }}>
+                  {s.title}
+                </div>
+                <div style={{ fontSize: 12, color: C.g600, lineHeight: 1.6 }}>
+                  {s.body}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── SCERA LINK ── */}
+        <div
+          style={card({
+            marginBottom: 24,
+            background: C.navy,
+            border: "none",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 20,
+            flexWrap: "wrap",
+          })}
+        >
+          <div>
+            <div style={{ ...sectionLabel, color: C.tealM }}>External resource</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "white", marginBottom: 6 }}>
+              Learn more about SCERA
+            </div>
+            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.65)", maxWidth: 560 }}>
+              SCERA (Smart CERAmic) is the nanostructured ceramic biosensor at the heart of
+              Smartheter. Visit the official SCERA project website for peer-reviewed research,
+              material science background, and clinical evidence.
+            </div>
+          </div>
+          <a
+            href="https://scera-project.com/"
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              flexShrink: 0,
+              background: C.teal,
+              color: "white",
+              padding: "10px 22px",
+              borderRadius: 8,
+              fontWeight: 700,
+              fontSize: 13,
+              textDecoration: "none",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Visit scera-project.com →
+          </a>
+        </div>
+
+        {/* ── DISCLAIMER BANNER ── */}
+        <div
+          style={{
+            background: "#FFFBF2",
+            border: `1px solid #F5CBA7`,
+            borderRadius: 10,
+            padding: "12px 18px",
+            fontSize: 12,
+            color: C.g700,
+            lineHeight: 1.6,
+            marginBottom: 32,
+          }}
+        >
+          <strong>⚠ Prototype disclaimer:</strong> Smartheter is a student research prototype
+          developed at Hochschule Mannheim. It is not a certified medical device and is not
+          intended for clinical use. All patient data shown in this application is fictional and
+          for demonstration purposes only.
+        </div>
+      </div>
+
+      {/* ── FOOTER / IMPRESSUM ── */}
+      <footer
         style={{
-          flex: 1,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          background: C.navy,
+          color: "rgba(255,255,255,0.6)",
+          padding: "40px 40px 28px",
+          marginTop: "auto",
         }}
       >
         <div
           style={{
-            position: "relative",
-            height: "100vh",
-            width: "80%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            maxWidth: 960,
+            margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: "2fr 1fr 1fr",
+            gap: 40,
+            marginBottom: 32,
           }}
         >
-         {/* Video Layer 1 */}
-          <video
-            ref={videoRefs[0]}
-            muted
-            playsInline
-            onEnded={nextVideo}
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              borderRadius: 12,
-              border: "1px solid #E5E7EB",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-              objectFit: "cover",
-              opacity: activeLayer === 0 ? 1 : 0,
-              transition: "opacity 500ms ease",
-            }}
-          />
+          {/* about */}
+          <div>
+            <div style={{ color: "white", fontWeight: 700, fontSize: 15, marginBottom: 10 }}>
+              Smartheter
+            </div>
+            <div style={{ fontSize: 12, lineHeight: 1.7 }}>
+              A student research project exploring catheter-associated urinary tract infection
+              (CAUTI) prevention through real-time biosensing, machine learning, and
+              user-centred design.
+              <br /><br />
+              Built as part of a product development course at{" "}
+              <a
+                href="https://www.hs-mannheim.de"
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: C.tealM, textDecoration: "none" }}
+              >
+                Hochschule Mannheim
+              </a>
+              .
+            </div>
+          </div>
 
-          {/* Video Layer 2 */}
-          <video
-            ref={videoRefs[1]}
-            muted
-            playsInline
-            onEnded={nextVideo}
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              borderRadius: 12,
-              border: "1px solid #E5E7EB",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-              objectFit: "cover",
-              opacity: activeLayer === 1 ? 1 : 0,
-              transition: "opacity 500ms ease",
-            }}
-          />
-      </div>
+          {/* team */}
+          <div>
+            <div style={{ color: "white", fontWeight: 700, fontSize: 13, marginBottom: 10 }}>
+              Team
+            </div>
+            {[
+              "Minh Giang Van",
+              "Rahel Grandi",
+              "Lucas Hoffmann",
+              "Michael Pochtar",
+              "John Schomaker",
+            ].map((name) => (
+              <div key={name} style={{ fontSize: 12, marginBottom: 4 }}>
+                {name}
+              </div>
+            ))}
+          </div>
+
+          {/* links & legal */}
+          <div>
+            <div style={{ color: "white", fontWeight: 700, fontSize: 13, marginBottom: 10 }}>
+              Links
+            </div>
+            {[
+              { label: "SCERA Project", href: "https://scera-project.com/" },
+              { label: "Hochschule Mannheim", href: "https://www.hs-mannheim.de" },
+            ].map((l) => (
+              <div key={l.label} style={{ fontSize: 12, marginBottom: 4 }}>
+                <a
+                  href={l.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ color: C.tealM, textDecoration: "none" }}
+                >
+                  {l.label} →
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* bottom bar */}
+        <div
+          style={{
+            maxWidth: 960,
+            margin: "0 auto",
+            paddingTop: 20,
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            display: "flex",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 8,
+            fontSize: 11,
+          }}
+        >
+          <span>© 2025 Smartheter — Student Prototype. Not a medical device.</span>
+          <span>
+            Core sensor technology:{" "}
+            <a
+              href="https://scera-project.com/"
+              target="_blank"
+              rel="noreferrer"
+              style={{ color: C.tealM, textDecoration: "none" }}
+            >
+              SCERA Project
+            </a>
+          </span>
+        </div>
+      </footer>
     </div>
-</div>
   );
 }
